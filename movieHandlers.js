@@ -1,5 +1,7 @@
 const database = require("./database");
 
+//--------------------------------------------------GET--------------------------------------------------------------------
+
 const getMovies = (req, res) => {
   database
     .query("select * from movies")
@@ -60,9 +62,47 @@ const getUsersById = (req, res) => {
     });
 };
 
+//--------------------------------------------------POST--------------------------------------------------------------------
+
+const postMovie = (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+
+  database
+    .query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [title, director, year, color, duration]
+    )
+    .then(([result]) => {
+      res.location(`/api/movies/${result.insertId}`).sendStatus(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving the movie");
+    });
+};
+
+const postUsers = (req, res) => {
+  const { firstname, lastname, email, city, language } = req.body;
+
+  database
+    .query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [firstname, lastname, email, city, language]
+    )
+    .then(([result]) => {
+      res.location(`/api/movies/${result.insertId}`).sendStatus(201);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error saving new User");
+    });
+};
+
 module.exports = {
   getMovies,
   getMovieById,
   getUsers,
   getUsersById,
+  postMovie,
+  postUsers,
 };
